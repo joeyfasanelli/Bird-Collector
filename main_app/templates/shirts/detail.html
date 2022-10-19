@@ -7,8 +7,8 @@
 
 <div class="card">
     <a href="{% url 'shirts_detail' shirt.id %}">
-        <div class="card-content">
-            <span class="card-title">A <span class="{{ shirt.color.lower }}-text">{{ shirt.color }}</span> {{ shirt.name }}</span>
+        <div class="card-content black-text">
+            <span class="card-title">A {{ shirt.color.lower }} {{ shirt.name }}</span>
         </div>
         <div class="card-action">
             <a href="{% url 'shirts_update' shirt.id %}">Edit</a>

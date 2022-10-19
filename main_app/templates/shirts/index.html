@@ -6,8 +6,8 @@
 {% for shirt in object_list %}
 <div class="card">
     <a href="{% url 'shirts_detail' shirt.id %}">
-        <div class="card-content">
-            <span class="card-title">A <span class="{{ shirt.color }}-text"></span> {{ shirt.name }}</span>
+        <div class="card-content black-text">
+            <span class="card-title">A {{shirt.color}} {{ shirt.name }}</span>
         </div>
     </a>
 </div>

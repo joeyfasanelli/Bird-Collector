@@ -1,6 +1,11 @@
 *{
     box-sizing: border-box;
     margin: 0;
+    font-weight: 100;
+}
+
+a { 
+    color: inherit; 
 }
 
 body{
