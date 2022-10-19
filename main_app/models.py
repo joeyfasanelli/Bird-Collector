@@ -7,10 +7,18 @@ MEALS = (
     ('D', 'Dinner'),
 )
 
+class Shirt(models.Model):
+    name = models.CharField(max_length=50)
+    color = models.CharField(max_length=50)
+
+    def get_absolute_url(self):
+        return reverse('shirts_detail', kwargs={'pk': self.id})
+
 class Bird(models.Model):
     name = models.CharField(max_length=100)
     description = models.TextField(max_length=250)
     age = models.IntegerField()
+    shirts = models.ManyToManyField(Shirt)
 
     def __str__(self):
         return self.name
@@ -27,5 +35,10 @@ class Feeding(models.Model):
       default=MEALS[0][0]
   )
   bird = models.ForeignKey(Bird, on_delete=models.CASCADE)
+
   def __str__(self):
       return f"{self.get_meal_display()} on {self.date}"
+    
+
+  class Meta:
+      ordering = ['-date']

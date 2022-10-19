@@ -1,5 +1,7 @@
 from django.shortcuts import render, redirect
-from .models import Bird
+from .models import Bird, Shirt
+from django.views.generic import ListView
+from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from .forms import FeedingForm
 
@@ -17,26 +19,31 @@ def birds_index(request):
 def birds_detail(request, bird_id):
   bird = Bird.objects.get(id=bird_id)
   feeding_form = FeedingForm()
+
+  shirts_bird_doesnt_have = Shirt.objects.exclude(id__in = bird.shirts.all().values_list('id'))
+  
   return render(request, 'birds/detail.html', { 
-    'bird': bird, 'feeding_form': feeding_form
+    'bird': bird, 
+    'feeding_form': feeding_form,
+    'shirts' : shirts_bird_doesnt_have,
     })
 
 def add_feeding(request, bird_id):
-  # create the ModelForm using the data in request.POST
-  form = FeedingForm(request.POST)
-  # validate the form
-  if form.is_valid():
-    # don't save the form to the db until it
-    # has the cat_id assigned
-    new_feeding = form.save(commit=False)
-    new_feeding.bird_id = bird_id
-    new_feeding.save()
-  return redirect('detail', bird_id=bird_id)
+    form = FeedingForm(request.POST)
+    if form.is_valid():
+        new_feeding = form.save(commit=False)
+        new_feeding.bird_id = bird_id
+        new_feeding.save()
+    return redirect('detail', bird_id=bird_id)
+
+def assoc_shirt(request, bird_id, shirt_id):
+    Bird.objects.get(id=bird_id).shirts.add(shirt_id)
+    return redirect('detail', bird_id=bird_id)
 
 
 class BirdCreate(CreateView):
   model = Bird
-  fields = '__all__'
+  fields = ['name', 'description', 'age']
   success_url = '/birds/'
 
 class BirdUpdate(UpdateView):
@@ -47,4 +54,22 @@ class BirdDelete(DeleteView):
   model = Bird
   success_url = '/birds'
 
-# Create your views here.
+class ShirtCreate(CreateView):
+    model = Shirt
+    fields = ('name', 'color')
+
+class ShirtUpdate(UpdateView):
+    model = Shirt
+    fields = ('name', 'color')
+
+class ShirtDelete(DeleteView):
+    model = Shirt
+    success_url = '/shirts/'
+
+class ShirtDetail(DetailView):
+    model = Shirt
+    template_name = 'shirts/detail.html'
+
+class ShirtList(ListView):
+    model = Shirt
+    template_name = 'shirts/index.html'
